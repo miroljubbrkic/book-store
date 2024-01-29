@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>PODACI</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="shortcut icon" href="https://previews.123rf.com/images/nikolae/nikolae1403/nikolae140300030/27453737-book-icon-isolated-on-white-background.jpg">
+    <script>
+        function ucitaj(){
+            let korinici = JSON.parse(window.localStorage.getItem("korisnici"));
+            let korisnik = window.location.search.substring(1);
+
+            let ime = document.getElementById("ime");
+            let prezime = document.getElementById("prezime");
+            let admin = document.getElementById("admin");
+            let username = document.getElementById("username");
+            let lozinka = document.getElementById("lozinka");
+
+            for(k of korinici){
+                if (k.username == korisnik){
+                    if(k.admin == true){
+                        ime.innerHTML = k.ime;
+                        prezime.innerHTML = k.prezime;
+                        admin.innerHTML = "Administrator";
+                        username.innerHTML = k.username;
+                        lozinka.innerHTML = k.lozinka
+                    }else{
+                        ime.innerHTML = k.ime;
+                        prezime.innerHTML = k.prezime;
+                        admin.innerHTML = "Kupac";
+                        username.innerHTML = k.username;
+                        lozinka.innerHTML = k.lozinka
+                    }
+                }
+            }
+
+            let a = document.getElementById("izmeni");
+            a.href = `izmeni.html?${korisnik}`;
+        }
+    </script>
+
+
+</head>
+
+<body onload="ucitaj()">
+    <h1>PODACI TRETNUTNOG KORISNIKA</h1>
+    <div style="width: 30%">
+        <p><b>Ime: </b><span id="ime"></span></p>
+        <br>
+        <p><b>Prezime: </b><span id="prezime"></span></p>
+        <br>
+        <p><b>Tip: </b><span id="admin"></span></p>
+        <br>
+        <p><b>Korisnicko ime: </b><span id="username"></span></p>
+        <br>
+        <p><b>Lozinka: </b><span id="lozinka"></span></p>
+        <br><br>
+        <a id="izmeni" class="link"><i class="fa fa-edit" style="width: 135px"></i></a>
+
+    </div>
+</body>
+
+</html>

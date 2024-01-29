@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>IZMENA KNJIGE</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="shortcut icon" href="https://previews.123rf.com/images/nikolae/nikolae1403/nikolae140300030/27453737-book-icon-isolated-on-white-background.jpg">
+    <script>
+        function load() {
+            let knjige = JSON.parse(window.localStorage.getItem("knjige"));   //popunjavanje selekta autora
+            let autori = JSON.parse(window.localStorage.getItem("autori"));
+            let select = document.getElementById("autori");
+
+            for (a of autori) {
+                let option = document.createElement("option");
+                option.innerHTML = `${a.ime} ${a.prezime}`;
+                option.value = `${a.ime} ${a.prezime}`;
+                select.appendChild(option);
+            }
+
+
+            let bar = window.location.search.substring(1).split("-");
+            let id = bar[1];
+
+            let isbn = document.getElementById("isbn");
+            let naslov = document.getElementById("naslov")
+            let autor = document.getElementById("autori");
+            let godina = document.getElementById("godina");
+            let cena = document.getElementById("cena");
+            let slobodno = document.getElementById("slobodno");
+            let slika = document.getElementById("slika");
+
+            for (let knjiga of knjige) {
+                if (knjiga.ISBN == id) {
+                    isbn.value = knjiga.ISBN;
+                    naslov.value = knjiga.naslov;
+                    autor.value = knjiga.autor;
+                    godina.value = knjiga.godina;
+                    cena.value = knjiga.cena;
+                    slobodno.value = knjiga.slobodno;
+                    slika.value = knjiga.img;
+                    break;
+                }
+            }
+        }
+        function izmeni() {
+            let knjige = JSON.parse(window.localStorage.getItem("knjige"));
+            let bar = window.location.search.substring(1).split("-");
+            let id = bar[1];
+            let korinsik = bar[0];
+
+            let isbn = document.getElementById("isbn").value;
+            let naslov = document.getElementById("naslov").value;
+            let autor = document.getElementById("autori").value;
+            let godina = document.getElementById("godina").value;
+            let cena = document.getElementById("cena").value;
+            let slobodno = document.getElementById("slobodno").value;
+            let slika = document.getElementById("slika").value;
+
+            if (!isbn || !naslov || !autor || !godina || !cena || !slobodno || !slika) {
+                alert("Morate popuniti sva polja!");
+                return;
+            }
+            if(isNaN(godina)){
+                alert("Godina mora biti broj!")
+                return;
+            }
+            if(isNaN(cena)){
+                alert("Cena mora biti broj!")
+                return;
+            }
+            if(isNaN(slobodno)){
+                alert("\"Slobodno\" mora biti broj!")
+                return;
+            }
+
+            let knjiga = {
+                "ISBN": isbn,
+                "naslov": naslov,
+                "autor": autor,
+                "godina": godina,
+                "cena": cena,
+                "slobodno": Number(slobodno),
+                "img": slika
+            }
+
+            for (k of knjige) {
+                if (k.ISBN == knjiga.ISBN) {
+                    knjige[knjige.indexOf(k)] = knjiga;
+                    window.localStorage.setItem("knjige", JSON.stringify(knjige));
+                    window.open(`pocetnaA.html?${korinsik}`, "_self");
+                    break;
+                }
+            }
+        }
+        function proveriIZMKNJ(event) {
+            if (event.keyCode == 13) {
+                izmeni();
+            }
+        }
+    </script>
+</head>
+
+<body onload="load()">
+    <h1>IZMENA KNJIGE</h1>
+    <div style="width: 30%">
+        <p><b>ISBN:</b></p>
+        <input type="text" class="unos" id="isbn" disabled>
+        <br><br>
+        <p><b>NASLOV:</b></p>
+        <input type="text" class="unos" id="naslov" onkeyup="proveriIZMKNJ(event)">
+        <br><br>
+        <p><b>AUTOR:</b></p>
+        <select id="autori" onkeyup="proveriIZMKNJ(event)"></select>
+        <br><br>
+        <p><b>GODINA:</b></p>
+        <input type="text" class="unos" id="godina" onkeyup="proveriIZMKNJ(event)">
+        <br><br>
+        <p><b>CENA:</b></p>
+        <input type="text" class="unos" id="cena" onkeyup="proveriIZMKNJ(event)">
+        <br><br>
+        <p><b>SLOBODNO:</b></p>
+        <input type="text" class="unos" id="slobodno" onkeyup="proveriIZMKNJ(event)">
+        <br><br>
+        <p><b>SLIKA:</b></p>
+        <input type="text" class="unos" id="slika" onkeyup="proveriIZMKNJ(event)">
+        <br><br>
+        <button onclick="izmeni()"><i class="fa fa-check"></i></button>
+    </div>
+
+</body>
+
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>IZMENA PODATAKA</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="shortcut icon" href="https://previews.123rf.com/images/nikolae/nikolae1403/nikolae140300030/27453737-book-icon-isolated-on-white-background.jpg">
+    <script>
+        function ucitaj() {
+            let korisnici = JSON.parse(window.localStorage.getItem("korisnici"));
+            let korisnik = window.location.search.substring(1);
+
+            let ime = document.getElementById("ime");
+            let prezim = document.getElementById("prezime");
+            let admin = document.getElementById("admin");
+            let username = document.getElementById("username");
+            let lozinka = document.getElementById("lozinka");
+
+            for (k of korisnici) {
+                if (k.username == korisnik) {
+                    if (k.admin == true) {
+                        ime.value = k.ime;
+                        prezime.value = k.prezime;
+                        admin.value = "Administrator"
+                        username.value = k.username;
+                        lozinka.value = k.lozinka;
+                    }else{
+                        ime.value = k.ime;
+                        prezime.value = k.prezime;
+                        admin.value = "Kupac"
+                        username.value = k.username;
+                        lozinka.value = k.lozinka;
+                    }
+                    break;
+                }
+            }
+        }
+
+        function izmeni() {
+            let korisnik = window.location.search.substring(1);
+            let korisnici = JSON.parse(window.localStorage.getItem("korisnici"));
+
+            let ime = document.getElementById("ime").value;
+            let prezim = document.getElementById("prezime").value;
+            let admin = document.getElementById("admin").value;
+            let username = document.getElementById("username").value;
+            let lozinka = document.getElementById("lozinka").value; 
+
+            if( !ime || !prezim || !admin || !username || !lozinka){
+                alert("Morate popuniti sva polja!");
+                return;
+            }
+
+            for (k of korisnici) {
+                if (k.username == korisnik) {
+                    if (k.admin == true) {
+                        let izmenjen = {
+                            "ime": ime,
+                            "prezime": prezim,
+                            "admin": true,
+                            "username": username,
+                            "lozinka": lozinka
+                        }
+                        korisnici[korisnici.indexOf(k)] = izmenjen;
+                        window.localStorage.setItem("korisnici",JSON.stringify(korisnici));
+                        window.open(`pocetnaA.html?${korisnik}`,"_self");
+                        break;
+                    } else {
+                        let izmenjen = {
+                            "ime": ime,
+                            "prezime": prezim,
+                            "admin": false,
+                            "username": username,
+                            "lozinka": lozinka
+                        }
+                        korisnici[korisnici.indexOf(k)] = izmenjen;
+                        window.localStorage.setItem("korisnici",JSON.stringify(korisnici));
+                        window.open(`pocetnaK.html?${korisnik}`,"_self");
+                        break;
+                    }
+                }
+            }
+        }
+
+        function proveriIZMENI(event){
+            if(event.keyCode == 13){
+                izmeni();
+            }
+        }
+    </script>
+</head>
+
+<body onload="ucitaj()">
+    <h1>IZMENA PODATAKA</h1>
+    <div style="width: 30%">
+        <p>Ime:</p>
+        <input type="text" id="ime" class="unos" placeholder="ime" onkeyup="proveriIZMENI(event)">
+        <br><br>
+        <p>Prezime:</p>
+        <input type="text" id="prezime" class="unos" placeholder="prezime" onkeyup="proveriIZMENI(event)">
+        <br><br>
+        <p>Tip:</p>
+        <input type="text" id="admin" class="unos" disabled placeholder="tip">
+        <br><br>
+        <p>Korisnicko ime:</p>
+        <input type="text" id="username" class="unos" disabled placeholder="korisnicko ime">
+        <br><br>
+        <p>Loznika:</p>
+        <input type="text" id="lozinka" class="unos" placeholder="lozinka" onkeyup="proveriIZMENI(event)">
+        <br><br>
+        <button class="btn" onclick="izmeni()"><i class="fa fa-check"></i></button>
+    </div>
+</body>
+
+</html>

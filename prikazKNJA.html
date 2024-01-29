@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>PRIKAZ KNJIGE</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="shortcut icon" href="https://previews.123rf.com/images/nikolae/nikolae1403/nikolae140300030/27453737-book-icon-isolated-on-white-background.jpg">
+
+    <style>
+        img {
+            float: left;
+            width: 25%;
+            height: 25%;
+            margin-right: 2%;    
+        }
+        div {
+            float: left;
+        }
+    </style>
+    <script>
+        function nadji(){
+            let bar = window.location.search.substring(1).split("-");
+            let isbn = bar[1];
+
+            let knjige = JSON.parse(window.localStorage.getItem("knjige"));
+
+            for(let knjiga of knjige){
+                if (knjiga.ISBN == isbn){
+                    prikazi(knjiga);
+                    break;
+                }
+            }
+            link();
+
+
+        }
+
+        function prikazi(knjiga){
+            document.getElementById("img").src = knjiga.img;
+            document.getElementById("naslov").innerHTML = knjiga.naslov;
+            document.getElementById("autor").innerHTML = knjiga.autor;
+            document.getElementById("godina").innerHTML = knjiga.godina;
+            document.getElementById("cena").innerHTML = knjiga.cena;
+            document.getElementById("slobodno").innerHTML = knjiga.slobodno;
+        }   
+
+        function obrisi(){
+            let knjige = JSON.parse(window.localStorage.getItem("knjige"));
+            let bar = window.location.search.substring(1).split("-");
+            let korinsik = bar[0];
+            let isbn = bar[1];
+            for(index in knjige){
+                if (knjige[index].ISBN == isbn){
+                    knjige.splice(index,1);
+                    break;
+                }
+            }
+            window.localStorage.setItem("knjige",JSON.stringify(knjige));
+            window.open(`pocetnaA.html?${korinsik}`,"_self");
+
+        }
+        function link(){
+            let bar = window.location.search.substring(1).split("-");
+            let korinsik = bar[0];
+            let isbn = bar[1];
+            let link = document.getElementById("izmena");
+            link.href = `izmenaKNJ.html?${korinsik}-${isbn}`;
+        }
+    </script>
+</head>
+<body onload="nadji()">
+    <img id="img">
+    <div style="width: 30%">
+        <h1 id="naslov"></h1>
+        <p><b>Autor: </b> <span id="autor"></span></p>
+        <p><b>Godina izdavanja: </b> <span id="godina"></span></p>
+        <p><b>Cena:</b> <span id="cena"></span></p>
+        <p><b>Slobodno:</b> <span id="slobodno"></span></p>
+        <hr>
+        <button class="btn" onclick="obrisi()"><i class="fa fa-trash"></i></button>
+        <!--<button onclick="obrisi()">OBRISI</button>-->
+        <a id="izmena" class="link"><i class="fa fa-edit" style="width: 135px"></i></a>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>PRIKAZ KNJIGE</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="shortcut icon"
+        href="https://previews.123rf.com/images/nikolae/nikolae1403/nikolae140300030/27453737-book-icon-isolated-on-white-background.jpg">
+    <style>
+        img {
+            float: left;
+            width: 25%;
+            height: 25%;
+            margin-right: 2%;
+        }
+
+        div {
+            float: left;
+        }
+    </style>
+    <script>
+        function nadji() {
+            let bar = window.location.search.substring(1).split("-");
+            let isbn = bar[1];
+
+            let knjige = JSON.parse(window.localStorage.getItem("knjige"));
+            let kolicina = document.getElementById("kolicina");
+
+            for (let knjiga of knjige) {
+                if (knjiga.ISBN == isbn) {
+                    kolicina.max = knjiga.slobodno;
+                    prikazi(knjiga);
+                    break;
+                }
+            }
+        }
+
+        function prikazi(knjiga) {
+            document.getElementById("img").src = knjiga.img;
+            document.getElementById("naslov").innerHTML = knjiga.naslov;
+            document.getElementById("autor").innerHTML = knjiga.autor;
+            document.getElementById("godina").innerHTML = knjiga.godina;
+            document.getElementById("cena").innerHTML = `${knjiga.cena} din`;
+            document.getElementById("slobodno").innerHTML = knjiga.slobodno;
+        }
+
+        function dodaj() {
+            let knjige = JSON.parse(window.localStorage.getItem("knjige"));
+            let korpa = JSON.parse(window.sessionStorage.getItem("korpa"));
+            let bar = window.location.search.substring(1).split("-");
+            let korisnik = bar[0];
+            let knjiga = bar[1];
+
+
+            let kolicina = Number(document.getElementById("kolicina").value);
+
+            for (book of knjige) {
+                if (book.ISBN == knjiga) {
+                    if (kolicina > 0 && kolicina <= book.slobodno) {
+
+                    } else {
+                        alert("Unos nije validan ili nema dovoljno knjiga!");
+                        return;
+                    }
+                }
+            }
+
+            let postoji = false;
+
+            for (korp of korpa) {
+                if (korp.ISBN == knjiga) {
+                    postoji = true;
+                    korp.kolicina = korp.kolicina + kolicina;
+                    window.sessionStorage.setItem("korpa", JSON.stringify(korpa));
+
+                }
+            }
+
+            if (postoji == false) {
+                for (k of knjige) {
+                    if (k.ISBN == knjiga) {
+                        let knj = {
+                            "ISBN": k.ISBN,
+                            "naslov": k.naslov,
+                            "autor": k.autor,
+                            "godina": k.godina,
+                            "slobodno": k.slobodno,
+                            "kolicina": kolicina,
+                            "cena": k.cena,
+                            "img": k.img
+                        }
+                        korpa.push(knj);
+                        window.sessionStorage.setItem("korpa", JSON.stringify(korpa));
+                    }
+                }
+            }
+
+            for (kg of knjige) {
+                if (kg.ISBN == knjiga) {
+                    kg.slobodno = kg.slobodno - kolicina;
+                    window.localStorage.setItem("knjige", JSON.stringify(knjige));
+                    alert("Knjiga je dodata!");
+                    window.open(`pocetnaK.html?${korisnik}`, "_self");
+                }
+            }
+        }
+
+        function proveriDODAJuKRP(event) {
+            if (event.keyCode == 13) {
+                dodaj();
+            }
+        }
+
+
+    </script>
+</head>
+
+<body onload="nadji()">
+    <img id="img">
+    <div>
+        <h1 id="naslov"></h1>
+        <p><b>Autor: </b> <span id="autor"></span></p>
+        <p><b>Godina izdavanja: </b> <span id="godina"></span></p>
+        <p><b>Cena:</b> <span id="cena"></span></p>
+        <p><b>Slobodno:</b> <span id="slobodno"></span></p>
+        <hr>
+        <br><br>
+        <input type="number" min="1" class="unos" id="kolicina" onkeyup="proveriDODAJuKRP(event)">
+        <button id="korpa" class="link" onclick="dodaj()"><i class="fa fa-cart-plus"></i></button>
+    </div>
+    <div id="dodavanje"></div>
+
+</body>
+
+</html>

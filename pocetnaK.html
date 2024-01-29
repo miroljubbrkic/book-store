@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="shortcut icon" href="https://previews.123rf.com/images/nikolae/nikolae1403/nikolae140300030/27453737-book-icon-isolated-on-white-background.jpg">
+    <script>
+        function autoriULS() {
+            let autori = [
+                {
+                    "ime": "Ivo",
+                    "prezime": "Andric"
+                },
+                {
+                    "ime": "Dositej",
+                    "prezime": "Obradovic"
+                },
+                {
+                    "ime": "Dzek",
+                    "prezime": "Kenfild"
+                },
+                {
+                    "ime": "Vladimir",
+                    "prezime": "Lamar"
+                },
+                {
+                    "ime": "Brajan",
+                    "prezime": "Trejsi"
+                },
+            ]
+
+            window.localStorage.setItem("autori", JSON.stringify(autori));
+            return autori;
+        }
+
+        //----- dodaje pocetne knjige u LS -----
+        function knjigeULS() {
+            let knjige = [
+                {
+                    "ISBN": 0,
+                    "naslov": "Na Drini cuprija",
+                    "autor": "Ivo Andric",
+                    "godina": "2014",
+                    "cena": "1300",
+                    "slobodno": 22,
+                    "img": "https://evrobook.rs/fajlovi/product/na-drini-cuprija-na-drini-cuprija-ivo-andric-474454_5b052b33409c0.jpg"
+                },
+                {
+                    "ISBN": 1,
+                    "naslov": "Zivot i prikljucenija",
+                    "autor": "Dositej Obradovic",
+                    "godina": "2007",
+                    "cena": "1000",
+                    "slobodno": 26,
+                    "img": "http://knjigeobradovic.com/wp-content/uploads/2016/12/%C5%BDIVOT-I-PRIKLJU%C4%8CENIJA-DOSITEJ-OBRADOVI%C4%86.jpg"
+                },
+                {
+                    "ISBN": 2,
+                    "naslov": "Uspeh sto da ne",
+                    "autor": "Dzek Kenfild",
+                    "godina": "2012",
+                    "cena": "900",
+                    "slobodno": 100,
+                    "img": "https://www.vulkani.rs/cached/www.vulkani.rs/Images/USPEH-STO-DA-NE0-1000x0-00007109225208.jpg"
+                },
+                {
+                    "ISBN": 3,
+                    "naslov": "Pink panteri",
+                    "autor": "Vladimir Lamar",
+                    "godina": "2015",
+                    "cena": "750",
+                    "slobodno": 30,
+                    "img": "https://i5.walmartimages.com/asr/dc61a128-a005-4c86-b5d4-c7dcac127fe2_1.d9892f116aa7bcafb2c67a413a7b7d1c.jpeg?odnHeight=450&odnWidth=450&odnBg=FFFFFF"
+                },
+                {
+                    "ISBN": 4,
+                    "naslov": "Nema opravdanja",
+                    "autor": "Brajan Trejsi",
+                    "godina": "2010",
+                    "cena": "1500",
+                    "slobodno": 10,
+                    "img": "https://www.vulkani.rs/cached/www.vulkani.rs/Images/NEMA-OPRAVDANJA0-1000x0-00000116155.jpg"
+                },
+                {
+                    "ISBN": 5,
+                    "naslov": "Prokleta avlija",
+                    "autor": "Ivo Andric",
+                    "godina": "2007",
+                    "cena": "999",
+                    "slobodno": 13,
+                    "img": "https://evrobook.rs/fajlovi/product/prokleta-avlija-prokleta-avlija-ivo-andric-474438_5b052a334052f.jpg"
+                }
+            ];
+            window.localStorage.setItem("knjige", JSON.stringify(knjige));
+            return knjige;
+        }
+
+        function racuniULS() {
+            let racuni = [
+                /*{
+                    "kupac": "vojav",
+                    "knjige": [
+                        {
+                            "naslov": "Uspeh sto da ne",
+                            "kolicina": 2
+                        },
+                        {
+                            "naslov": "Prokleta Avlija",
+                            "kolicina": 1
+                        }
+                    ],
+                    "ukupno": 1799
+                },
+                {
+                    "kupac": "vojav",
+                    "knjige": [
+                        {
+                            "naslov": "Nema opravdanja",
+                            "kolicina": 2
+                        },
+                        {
+                            "naslov": "Na Drini cuprija Avlija",
+                            "kolicina": 1
+                        }
+                    ],
+                    "ukupno": 1200
+                }*/
+            ];
+            window.localStorage.setItem("racuni", JSON.stringify(racuni));
+            return racuni;
+        }
+
+
+
+        //----- ucitava podatke u LS i osstale funkcije pri loadovanju -----
+        function ucitaj() {
+
+            let knjige = JSON.parse(window.localStorage.getItem("knjige"));
+            if (!knjige) {
+                knjige = knjigeULS();
+            }
+
+            let autori = JSON.parse(window.localStorage.getItem("autori"));
+            if (!autori) {
+                autori = autoriULS();
+            }
+
+            let racuni = JSON.parse(window.localStorage.getItem("racuni"));
+            if (!racuni) {
+                racuni = racuniULS()
+            }
+
+
+            prikazi(knjige);
+            select();
+            prijavljen();
+            userZAlink();
+        }
+
+        //----- ispisuje ko je trenutno prijavljni korisnik -----
+        function prijavljen() {
+            let username = window.location.search.substring(1);
+            let korisnici = JSON.parse(window.localStorage.getItem("korisnici"));
+            let prijavljeni = document.getElementById("prijavljeni");
+            for (let korisnik of korisnici) {
+                if (korisnik.username == username) {
+                    if (korisnik.admin == true) {
+                        prijavljeni.innerHTML = `${korisnik.ime} ${korisnik.prezime}`;
+                    } else {
+                        prijavljeni.innerHTML = `${korisnik.ime} ${korisnik.prezime}`;
+                    }
+
+                }
+            }
+        }
+
+        //----- funkcija koja prikazuje knjige -----
+        function prikazi(knjige) {
+            let glavni = document.getElementById("glavni");
+            glavni.innerHTML = "";
+
+            for (let knjiga of knjige) {
+                let k = napravi(knjiga);
+
+                glavni.appendChild(k);
+            }
+        }
+
+        //----- funkcija koja za svaku knjigu pravi neophodne elemente -----
+        function napravi(knjiga) {
+            let korisnik = window.location.search.substring(1);
+
+            let div = document.createElement("div");
+            div.classList.add("knjiga");
+
+            let a = document.createElement("a");
+            //a.href = `./prikazKNJ.html?${knjiga.ISBN}`;
+            a.href = `prikazKNJK.html?${korisnik}-${knjiga.ISBN}`;
+
+            let img = document.createElement("img");
+            img.src = knjiga.img;
+            a.appendChild(img);
+
+            let p1 = document.createElement("p");
+            p1.innerHTML = knjiga.naslov;
+            a.appendChild(p1);
+
+            let p2 = document.createElement("p");
+            p2.innerHTML = knjiga.autor;
+            a.appendChild(p2);
+
+            let p3 = document.createElement("p");
+            p3.innerHTML = `${knjiga.cena} din`;
+            p3.classList.add("nevidljivo");
+            a.appendChild(p3);
+
+            div.appendChild(a);
+            return div;
+        }
+
+        //----- funkcija za pretragu po naslovu klikom na dugme -----
+        function pretraga() {
+            let termin = document.getElementById("pretraga").value;
+
+            let knjige = JSON.parse(localStorage.getItem("knjige"));
+
+            let pronadjeni = [];
+
+            for (knjiga of knjige) {
+                if (knjiga.naslov.toLowerCase().includes(termin.toLowerCase())) {
+                    pronadjeni.push(knjiga);
+                }
+            }
+
+            if (!pronadjeni.length) {
+                alert("Nije nadjen nijedan album sa unetim podacima");
+            } else {
+                prikazi(pronadjeni);
+            }
+        }
+
+        //----- proverava da li je ENTER pritisnut -----
+        function proveripretraga(event) {
+            if (event.keyCode == 13) {
+                pretraga();
+            }
+        }
+
+        //---- ubacuje u el. select autore iz LS -----
+        function select() {
+            let autori = JSON.parse(window.localStorage.getItem("autori"));
+            let select = document.getElementById("autori");
+
+            let o = document.createElement("option");
+            o.innerHTML = "Autori";
+            o.value = "";
+            select.appendChild(o);
+
+            for (autor of autori) {
+                let option = document.createElement("option");
+                option.innerHTML = `${autor.ime} ${autor.prezime}`;
+                option.value = `${autor.ime} ${autor.prezime}`;
+                select.appendChild(option);
+            }
+        }
+
+        //----- klikom na dugme prikazuje knjige izabranog autora -----
+        function autori() {
+            let knjige = JSON.parse(window.localStorage.getItem("knjige"));
+            let autor = document.getElementById("autori").value;
+            let autori = [];
+            for (knjga of knjige) {
+                if (knjga.autor.includes(autor)) {
+                    autori.push(knjga);
+                }
+            }
+            prikazi(autori);
+
+        }
+
+        function userZAlink() {
+            let korisnik = window.location.search.substring(1);
+            let prijavljeni = document.getElementById("prijavljeni");
+            prijavljeni.href = `informacije.html?${korisnik}`;
+
+            let kupovine = document.getElementById("kupovine");
+            kupovine.href = `kupovine.html?${korisnik}`;
+
+            let korpa = document.getElementById("korpa");
+            korpa.href = `korpa.html?${korisnik}`;
+
+        }
+
+        function odjava(){
+            window.open("prijava.html","_self");
+        }
+
+    </script>
+</head>
+
+<body onload="ucitaj()">
+    <h1>POCETNA STRANICA</h1>
+    <div style="width: 30%" class="kontejner">
+        <p class="pasus">Prijavljen je: <a id="prijavljeni" class="link" style="text-decoration: none"></a></p>
+        <button onclick="odjava()"><i class="fa fa-power-off"></i></button>
+    </div>
+    <br>
+
+
+    <input type="text" id="pretraga" class="unos" placeholder="naslov" onkeyup="proveripretraga(event)">
+    <button onclick="pretraga()"><i class="fa fa-search"></i></button>
+    <!--<button onclick="pretraga()">PRETRAZI</button>-->
+
+    <select id="autori" class="unos"></select>
+
+    <button onclick="autori()"><i class="fa fa-search"></i></button>
+    <!--<button onclick="autori()">PO AUTORU</button>-->
+
+    <a class="link" id="korpa" style="float: right"><i class="fa fa-shopping-cart"></i></a>
+
+    <a class="link" id="kupovine" style="float: right">KUPOVINE</a>
+    <br>
+    <br>
+    <hr>
+    <br>
+    <br>
+    <div id="glavni" class="kontejner"></div>
+</body>
+
+</html>

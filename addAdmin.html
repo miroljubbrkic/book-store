@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>DODAVANJE ADMINISTRATORA</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="shortcut icon" href="https://previews.123rf.com/images/nikolae/nikolae1403/nikolae140300030/27453737-book-icon-isolated-on-white-background.jpg">
+    <script>
+        function registracija() {
+            let korisnici = JSON.parse(window.localStorage.getItem("korisnici"));
+
+            let ime = document.getElementById("ime").value;
+            let prezime = document.getElementById("prezime").value;
+            let username = document.getElementById("username").value;
+            let pass = document.getElementById("pass").value;
+
+            if(!ime || !prezime || !username || !pass){
+                alert("Morate popuniti sva polja!");
+                return;
+            }
+            let nadjen = false;
+            for (korisnik of korisnici) {
+                if (korisnik.username == username) {
+                    nadjen = true;
+                    alert("Korisnicko ime je vec u upotrebi!");
+                    return;
+                }
+            }
+            if (nadjen == false) {
+                let novi = {
+                    "ime": ime,
+                    "prezime": prezime,
+                    "admin": true,
+                    "username": username,
+                    "lozinka": pass
+                }
+                korisnici.push(novi);
+                localStorage.setItem("korisnici", JSON.stringify(korisnici));
+                window.open("prijava.html","_self");
+            }
+        }
+        function proveriregistracija(event){
+            if(event.keyCode == 13){
+                registracija();
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <h1>DODAVANJE ADMINISTRATORA</h1>
+    <div style="width: 30%">
+        <p><b>Ime:</b></p>
+        <input type="text" id="ime" placeholder="ime" class="unos" onkeyup="proveriregistracija(event)">
+        <br>
+        <br>
+        <p><b>Prezime:</b></p>
+        <input type="text" id="prezime" placeholder="prezime" class="unos" onkeyup="proveriregistracija(event)">
+        <br>
+        <br>
+        <p><b>Korisnicko ime:</b></p>
+        <input type="text" id="username" placeholder="korisnicko ime" class="unos" onkeyup="proveriregistracija(event)">
+        <br>
+        <br>
+        <p><b>Lozinka:</b></p>
+        <input type="password" id="pass" placeholder="lozinka" class="unos" onkeyup="proveriregistracija(event)">
+        <br>
+        <br>
+        <button onclick="registracija()"><i class="fa fa-check"></i></button>
+    </div>
+</body>
+
+</html>

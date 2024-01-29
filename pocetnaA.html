@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>POCETNA</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="shortcut icon" href="https://previews.123rf.com/images/nikolae/nikolae1403/nikolae140300030/27453737-book-icon-isolated-on-white-background.jpg">
+
+
+    <script>
+
+        //----- dodaje pocetne autore u LS -----
+        function autoriULS() {
+            let autori = [
+                {
+                    "ime": "Ivo",
+                    "prezime": "Andric"
+                },
+                {
+                    "ime": "Dositej",
+                    "prezime": "Obradovic"
+                },
+                {
+                    "ime": "Dzek",
+                    "prezime": "Kenfild"
+                },
+                {
+                    "ime": "Džejms",
+                    "prezime": "Klir"
+                },
+                {
+                    "ime": "Brajan",
+                    "prezime": "Trejsi"
+                },
+                {
+                    "ime": "Brajan",
+                    "prezime": "Souza"
+                }
+            ]
+
+            window.localStorage.setItem("autori", JSON.stringify(autori));
+            return autori;
+        }
+
+        //----- dodaje pocetne knjige u LS -----
+        function knjigeULS() {
+            let knjige = [
+                {
+                    "ISBN": 0,
+                    "naslov": "Na Drini cuprija",
+                    "autor": "Ivo Andric",
+                    "godina": "2014",
+                    "cena": "968",
+                    "slobodno": 22,
+                    "img": "https://www.knjizare-vulkan.rs/files/images/slike_proizvoda/365233.jpg"
+                },
+                {
+                    "ISBN": 1,
+                    "naslov": "Zivot i prikljucenija",
+                    "autor": "Dositej Obradovic",
+                    "godina": "2007",
+                    "cena": "660",
+                    "slobodno": 26,
+                    "img": "https://delfi.rs/_img/artikli/2019/04/zivot_i_prikljucenija_pismo_haralampiju_vv.jpg"
+                },
+                {
+                    "ISBN": 2,
+                    "naslov": "Uspeh sto da ne",
+                    "autor": "Dzek Kenfild",
+                    "godina": "2012",
+                    "cena": "1199",
+                    "slobodno": 100,
+                    "img": "https://www.knjizare-vulkan.rs/files/images/slike_proizvoda/331823.jpg"
+                },
+                {
+                    "ISBN": 3,
+                    "naslov": "Atomske navike",
+                    "autor": "Džejms Klir",
+                    "godina": "2015",
+                    "cena": "1210",
+                    "slobodno": 30,
+                    "img": "https://www.knjizare-vulkan.rs/files/images/slike_proizvoda/335516.jpg"
+                },
+                {
+                    "ISBN": 4,
+                    "naslov": "Nema opravdanja",
+                    "autor": "Brajan Trejsi",
+                    "godina": "2010",
+                    "cena": "799",
+                    "slobodno": 10,
+                    "img": "https://www.knjizare-vulkan.rs/files/watermark/files/images/slike_proizvoda/thumbs_w/225318_w.jpg"
+                },
+                {
+                    "ISBN": 5,
+                    "naslov": "Postanite ono za šta ste predodredjeni",
+                    "autor": "Brajan Souza",
+                    "godina": "2007",
+                    "cena": "1188",
+                    "slobodno": 13,
+                    "img": "https://delfi.rs/_img/artikli/knjige/50/vv/delfi_postanite_ono_za_sta_ste_predodredjeni_brajan_souza.jpg"
+                }
+            ];
+            window.localStorage.setItem("knjige", JSON.stringify(knjige));
+            return knjige;
+        }
+
+        //----- ucitava podatke u LS i osstale funkcije pri loadovanju -----
+        function ucitaj() {
+            let knjige = JSON.parse(window.localStorage.getItem("knjige"));
+            if (!knjige) {
+                knjige = knjigeULS();
+            }
+            let autori = JSON.parse(window.localStorage.getItem("autori"));
+            if (!autori) {
+                autori = autoriULS();
+            }
+            prikazi(knjige);
+            select();
+            prijavljen();
+            userZAlink();
+        }
+
+        //----- ispisuje ko je trenutno prijavljni korisnik -----
+        function prijavljen() {
+            let username = window.location.search.substring(1);
+            let korisnici = JSON.parse(window.localStorage.getItem("korisnici"));
+            let prijavljeni = document.getElementById("prijavljeni");
+            for (let korisnik of korisnici) {
+                if (korisnik.username == username) {
+                    if (korisnik.admin == true) {
+                        prijavljeni.innerHTML = `${korisnik.ime} ${korisnik.prezime}`;
+                    } else {
+                        prijavljeni.innerHTML = `${korisnik.ime} ${korisnik.prezime}`;
+                    }
+
+                }
+            }
+        }
+
+        //----- funkcija koja prikazuje knjige -----
+        function prikazi(knjige) {
+            let glavni = document.getElementById("glavni");
+            glavni.innerHTML = "";
+
+            for (let knjiga of knjige) {
+                let k = napravi(knjiga);
+
+                glavni.appendChild(k);
+            }
+        }
+
+        //----- funkcija koja za svaku knjigu pravi neophodne elemente -----
+        function napravi(knjiga) {
+            let korisnik = window.location.search.substring(1);
+
+            let div = document.createElement("div");
+            div.classList.add("knjiga");
+
+            let a = document.createElement("a");
+            //a.href = `./prikazKNJ.html?${knjiga.ISBN}`;
+            a.href = `prikazKNJA.html?${korisnik}-${knjiga.ISBN}`;
+
+            let img = document.createElement("img");
+            img.src = knjiga.img;
+            a.appendChild(img);
+
+            let p1 = document.createElement("p");
+            p1.innerHTML = knjiga.naslov;
+            a.appendChild(p1);
+
+            let p2 = document.createElement("p");
+            p2.innerHTML = knjiga.autor;
+            a.appendChild(p2);
+
+            let p3 = document.createElement("p");
+            p3.innerHTML = `${knjiga.cena} din`;
+            p3.classList.add("nevidljivo");
+            a.appendChild(p3);
+
+            div.appendChild(a);
+            return div;
+        }
+
+        //----- funkcija za pretragu po naslovu klikom na dugme -----
+        function pretraga() {
+            let termin = document.getElementById("pretraga").value;
+
+            let knjige = JSON.parse(localStorage.getItem("knjige"));
+
+            let pronadjeni = [];
+
+            for (knjiga of knjige) {
+                if (knjiga.naslov.toLowerCase().includes(termin.toLowerCase())) {
+                    pronadjeni.push(knjiga);
+                }
+            }
+
+            if (!pronadjeni.length) {
+                alert("Nije nadjen nijedan album sa unetim podacima");
+                return;
+            } else {
+                prikazi(pronadjeni);
+            }
+        }
+
+        //----- proverava da li je ENTER pritisnut -----
+        function proveripretraga(event) {
+            if (event.keyCode == 13) {
+                pretraga();
+            }
+        }
+
+        //---- ubacuje u el. select autore iz LS -----
+        function select() {
+            let autori = JSON.parse(window.localStorage.getItem("autori"));
+            let select = document.getElementById("autori");
+
+            let o = document.createElement("option");
+            o.innerHTML = "Svi";
+            o.value = "";
+            select.appendChild(o);
+
+            for (autor of autori) {
+                let option = document.createElement("option");
+                option.innerHTML = `${autor.ime} ${autor.prezime}`;
+                option.value = `${autor.ime} ${autor.prezime}`;
+                select.appendChild(option);
+            }
+        }
+
+        //----- klikom na dugme prikazuje knjige izabranog autora -----
+        function autori() {
+            let knjige = JSON.parse(window.localStorage.getItem("knjige"));
+            let autor = document.getElementById("autori").value;
+            let autori = [];
+            for (knjga of knjige) {
+                if (knjga.autor.includes(autor)) {
+                    autori.push(knjga);
+                }
+            }
+            prikazi(autori);
+
+        }
+
+        function userZAlink() {
+            let korisnik = window.location.search.substring(1);
+
+            let addAutora = document.getElementById("addAutora");
+            addAutora.href = `addAutor.html?${korisnik}`;
+
+            let addKnjiga = document.getElementById("addKnjiga");
+            addKnjiga.href = `addKnjiga.html?${korisnik}`;
+
+            let addAdmin = document.getElementById("addAdmin");
+            addAdmin.href = `addAdmin.html?${korisnik}`;
+
+            let prijavljeni = document.getElementById("prijavljeni");
+            prijavljeni.href = `informacije.html?${korisnik}`;
+
+        }
+
+        function odjava() {
+            window.open("prijava.html", "_self");
+        }
+    </script>
+</head>
+
+
+<body onload="ucitaj()">
+    <h1>POCETNA STRANICA</h1>
+    <div style="width: 30%" class="kontejner">
+        <p class="pasus">Prijavljen je: <a id="prijavljeni" class="link" style="text-decoration: none"></a></p>
+        <button onclick="odjava()"><i class="fa fa-power-off"></i></button>
+    </div>
+
+
+    <input type="text" id="pretraga" class="unos" placeholder="naslov" onkeyup="proveripretraga(event)">
+    <button onclick="pretraga()"><i class="fa fa-search"></i></button>
+    <!--<button onclick="pretraga()">PRETRAZI</button>-->
+
+    <select id="autori" class="unos"></select>
+
+    <button onclick="autori()"><i class="fa fa-search"></i></button>
+
+    <div class="dropdown">
+        <button class="dropbtn"><i class="fa fa-plus"></i></button>
+        <div class="dropdown-content">
+            <a id="addAutora">Autor</a>
+            <a id="addKnjiga">Knjiga</a>
+            <a id="addAdmin">Administrator</a>
+        </div>
+    </div>
+    <hr>
+    <br>
+    <br>
+    <div id="glavni" class="kontejner"></div>
+</body>
+
+</html>

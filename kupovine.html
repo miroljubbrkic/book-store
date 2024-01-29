@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>PROSLE KUPOVINE</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="shortcut icon" href="https://previews.123rf.com/images/nikolae/nikolae1403/nikolae140300030/27453737-book-icon-isolated-on-white-background.jpg">
+    <script>
+        function racuniPrijavljenog(){
+
+            let racuni = JSON.parse(window.localStorage.getItem("racuni"));
+            let korisnik = window.location.search.substring(1);
+
+            let glavni = document.getElementById("glavni");
+            glavni.innerHTML = "";
+
+            for(racun of racuni){
+                if(racun.kupac == korisnik){
+                    let noviDiv = napraviRAcun(racun);
+                    glavni.appendChild(noviDiv);
+                }
+            }
+        }
+        function napraviRAcun(racun){
+            let div = document.createElement("div");
+            div.classList.add("racun");
+
+            let p1 = document.createElement("p");
+            p1.innerHTML =`Kupac: ${racun.kupac}`;
+            //p1.classList.add("racun");
+            div.appendChild(p1);
+
+            let br = document.createElement("br");
+            div.appendChild(br);
+
+            for(knjiga of racun.knjige){
+                let p = document.createElement("p");
+                p.innerHTML = `${knjiga.naslov}  X ${knjiga.kolicina}`;
+                //p.classList.add("racun");
+                div.appendChild(p);
+            }
+            let br2 = document.createElement("br");
+            div.appendChild(br2);
+
+            let p2 = document.createElement("p");
+            p2.innerHTML = `Ukupno: ${racun.ukupno}`;
+            //p2.classList.add("racun");
+            div.appendChild(p2);
+
+            return div;
+        }
+    </script>
+</head>
+
+<body onload="racuniPrijavljenog()">
+    <h1>PROSLE KUPOVINE</h1>
+    <div id="glavni" class="kontejner"></div>
+</body>
+
+</html>

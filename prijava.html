@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>PRIJAVA</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="shortcut icon" href="https://previews.123rf.com/images/nikolae/nikolae1403/nikolae140300030/27453737-book-icon-isolated-on-white-background.jpg">
+    <script>
+
+        //----- dodaje pocetne korisnike u LS -----
+        function korisniciULS() {
+            let korisnici = [
+                {
+                    "ime": "Miroljub",
+                    "prezime": "Brkic",
+                    "admin": true,
+                    "username": "miroljubbr",
+                    "lozinka": "qwerty"
+                },
+                {
+                    "ime": "Voja",
+                    "prezime": "VESELINOVIC",
+                    "admin": false,
+                    "username": "vojav",
+                    "lozinka": "54321"
+                },
+                {
+                    "ime": "qwerty",
+                    "prezime": "qwerty",
+                    "admin": false,
+                    "username": "qwerty",
+                    "lozinka": "asdf"
+                },
+                {
+                    "ime": "123",
+                    "prezime": "123",
+                    "admin": false,
+                    "username": "123",
+                    "lozinka": "123"
+                }
+            ];
+            window.localStorage.setItem("korisnici", JSON.stringify(korisnici));
+            return korisnici;
+        }
+
+        function korpaULS() {
+            let korpa = [];
+            window.sessionStorage.setItem("korpa", JSON.stringify(korpa));
+            return korpa;
+        }
+
+        //----- pri ucitavanju stranice proverava da li je LS prazan -----
+        function ucitajKR() {
+
+            let korsinici = JSON.parse(window.localStorage.getItem("korisnici"));
+            if (!korsinici) {
+                korisnici = korisniciULS();
+            }
+
+            let korpa = JSON.stringify(window.sessionStorage.getItem("korpa"));
+            if (!korpa) {
+                korpa = korpaULS();
+            } else {
+                korpa = [];
+                window.sessionStorage.setItem("korpa", JSON.stringify(korpa));
+            }
+        }
+
+        //----- prijavljivanje korsinika -----
+        function prijava() {
+
+            let korisnici = JSON.parse(window.localStorage.getItem("korisnici"));
+
+            let username = document.getElementById("username").value;
+            let pass = document.getElementById("pass").value;
+
+            if (username == "") {
+                alert("Niste uneli korisnicko ime!");
+                return;
+            } else if (pass == "") {
+                alert("Niste uneli lozinku!");
+                return;
+            }
+
+            let nadjen = false;
+            for (korisnik of korisnici) {
+                if (korisnik.username == username && korisnik.lozinka == pass) {
+                    nadjen = true;
+                    if (korisnik.admin == true) {
+                        window.open(`pocetnaA.html?${korisnik.username}`, "_self");
+                    } else {
+                        window.open(`pocetnaK.html?${korisnik.username}`, "_self");
+                    }
+
+                }
+            }
+            if (nadjen == false) {
+                alert("Nije pronadjen ni jedan korisnik");
+            }
+        }
+
+        function proveriprijava(event) {
+            if (event.keyCode == 13) {
+                prijava();
+            }
+        }
+    </script>
+
+</head>
+
+<body onload="ucitajKR()">
+    <h1>PRIJAVA NA SISTEM</h1>
+    <br>
+    <div id="glavni">
+        <input type="text" class="unos" placeholder="korisnicko ime" id="username" onkeyup="proveriprijava(event)">
+        <br>
+        <br>
+        <input type="password" class="unos" placeholder="lozinka" id="pass" onkeyup="proveriprijava(event)">
+        <br>
+        <br>
+        <button type="button" id="dugme" onclick="prijava()">PRIJAVA</button>
+    </div>
+    <div style="width: 30%"><a href="registracija.html" class="link"><i class="fa fa-user-plus"></i></a></div>
+
+
+
+
+
+</body>
+
+</html>

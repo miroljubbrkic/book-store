@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>KORPA</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="shortcut icon" href="https://previews.123rf.com/images/nikolae/nikolae1403/nikolae140300030/27453737-book-icon-isolated-on-white-background.jpg">
+    <script>
+        function ucitaj() {
+            let korpa = JSON.parse(window.sessionStorage.getItem("korpa"));
+            prikazi(korpa);
+        }
+        //----- funkcija koja prikazuje knjige -----
+        function prikazi(korpa) {
+            let glavni = document.getElementById("glavni");
+            glavni.innerHTML = "";
+
+            for (let knjiga of korpa) {
+                let k = napravi(knjiga);
+
+                glavni.appendChild(k);
+            }
+            let cena = ukupno();
+
+            let cenaDIV = document.getElementById("cena");
+            cenaDIV.innerHTML = "";
+            let p = document.createElement("p");
+            p.innerHTML = `${cena} din`;
+            cenaDIV.appendChild(p);
+
+            let kupi = document.createElement("button");
+            kupi.innerHTML = "<i class=\"fa fa-money\"></i>";
+            kupi.onclick = function () {
+                kupovina();
+            }
+            cenaDIV.appendChild(kupi);
+        }
+
+        function ukupno() {
+            let korpa = JSON.parse(window.sessionStorage.getItem("korpa"));
+            let ukupno = 0;
+            for (k of korpa) {
+                ukupno = ukupno + (Number(k.cena) * Number(k.kolicina));
+            }
+            return ukupno;
+        }
+
+        //----- funkcija koja za svaku knjigu pravi neophodne elemente -----
+        function napravi(knjiga) {
+            let korisnik = window.location.search.substring(1);
+
+            let div = document.createElement("div");
+            div.classList.add("knjiga");
+
+
+            let img = document.createElement("img");
+            img.src = knjiga.img;
+            div.appendChild(img);
+
+            let p1 = document.createElement("p");
+            p1.innerHTML = knjiga.naslov;
+            div.appendChild(p1);
+
+            let p2 = document.createElement("p");
+            p2.innerHTML = knjiga.autor;
+            div.appendChild(p2);
+
+            let p3 = document.createElement("p");
+            p3.innerHTML = `${knjiga.kolicina} kom`;
+            div.appendChild(p3);
+
+            let p4 = document.createElement("p");
+            p4.innerHTML = `${knjiga.cena} din`;
+            div.appendChild(p4);
+
+            let bris = document.createElement("button");
+            bris.innerHTML = "UKLONI";
+            bris.onclick = function () {
+                brisi(knjiga.ISBN);
+            }
+            div.appendChild(bris);
+
+            let izm = document.createElement("button");
+            izm.innerHTML = "IZMENI";
+            izm.onclick = function () {
+                izmeni(knjiga.ISBN);
+            }
+            div.appendChild(izm);
+
+
+            //div.appendChild(a);
+            return div;
+        }
+
+        function brisi(ISBN) {
+            let knjige = JSON.parse(window.localStorage.getItem("knjige"));
+            let korpa = JSON.parse(window.sessionStorage.getItem("korpa"));
+
+            for (k of korpa) {
+                if (k.ISBN == ISBN) {
+                    for (knj of knjige) {
+                        if (knj.ISBN == ISBN) {
+                            knj.slobodno = knj.slobodno + k.kolicina;
+                            break;
+                        }
+                    }
+                    korpa.splice(korpa.indexOf(k), 1);
+                    window.sessionStorage.setItem("korpa", JSON.stringify(korpa));
+                    window.localStorage.setItem("knjige",JSON.stringify(knjige));
+                    prikazi(korpa);
+                    break;
+                }
+            }
+        }
+
+        function izmeni(ISBN) {
+            let knjige = JSON.parse(window.localStorage.getItem("knjige"));
+            let korpa = JSON.parse(window.sessionStorage.getItem("korpa"));
+
+            for (k of korpa) {
+                if (k.ISBN == ISBN) {
+                    let Nkolicina = Number(prompt(`Unesite broj knjiga za kupovinu (slobodno: ${k.slobodno})`));
+                    if (Nkolicina > 0 && Nkolicina <= k.slobodno) {
+                        
+
+                        for(knj of knjige){
+                            if (knj.ISBN == ISBN){
+                                knj.slobodno = knj.slobodno + k.kolicina - Nkolicina;
+                            }
+                        }
+                        k.kolicina = Nkolicina;
+                        window.localStorage.setItem("knjige",JSON.stringify(knjige));
+                        window.sessionStorage.setItem("korpa", JSON.stringify(korpa));
+                        prikazi(korpa);
+                    } else {
+                        alert("Unos nije validan ili nema dovoljno knjiga!");
+                        return;
+                    }
+                    //break;
+                }
+            }
+        }
+
+        function kupovina() {
+            let knjige = JSON.parse(window.localStorage.getItem("knjige"));
+            let korpa = JSON.parse(window.sessionStorage.getItem("korpa"));
+            let racuni = JSON.parse(window.localStorage.getItem("racuni"));
+            let korisnik = window.location.search.substring(1);
+
+            if(!korpa.length){
+                alert("Korpa je prazna!");
+                return; 
+            }
+
+            let racun = {
+                "kupac": korisnik,
+                "knjige": knjigeUkorpi(),
+                "ukupno": ukupno()
+            }
+            racuni.push(racun);
+            window.localStorage.setItem("racuni", JSON.stringify(racuni));
+
+            for (k of korpa) {
+                for (knj of knjige) {
+                    if (k.ISBN == knj.ISBN) {
+                        knj.slobodno = knj.slobodno - k.kolicina;
+                    }
+                }
+            }
+            window.localStorage.setItem("knjige", JSON.stringify(knjige));
+
+            korpa = [];
+            window.sessionStorage.setItem("korpa", JSON.stringify(korpa));
+            alert("Kupljeno!!!");
+
+            window.open(`pocetnaK.html?${korisnik}`, "_self");
+        }
+
+        function knjigeUkorpi() {
+            let korpa = JSON.parse(window.sessionStorage.getItem("korpa"));
+            let knjige = [];
+            for (k of korpa) {
+                let knjiga = {
+                    "naslov": k.naslov,
+                    "kolicina": k.kolicina
+                }
+                knjige.push(knjiga);
+            }
+            return knjige;
+        }
+    </script>
+</head>
+
+<body onload="ucitaj()">
+    <h1>KORPA</h1>
+    <div id="cena"></div>
+    <hr>
+    <div id="glavni"></div>
+
+
+</body>
+
+</html>

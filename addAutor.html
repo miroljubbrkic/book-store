@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>DODAVANJE AUTORA</title>
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="shortcut icon" href="https://previews.123rf.com/images/nikolae/nikolae1403/nikolae140300030/27453737-book-icon-isolated-on-white-background.jpg">
+
+    <script>
+        function dodajAutora(){
+            let autori = JSON.parse(window.localStorage.getItem("autori"));
+            let korisnik = window.location.search.substring(1);
+
+            let ime = document.getElementById("ime").value;
+            let prezime = document.getElementById("prezime").value;
+
+            if(!ime || !prezime){
+                alert("Morate popuniti oba polja!");
+                return; 
+            }
+
+            let postoji = false;
+            for(autor of autori){
+                if (autor.ime.toLowerCase() == ime.toLowerCase() && autor.prezime.toLowerCase() == prezime.toLowerCase()){
+                    postoji = true;
+                    break
+                }
+            }
+            if (postoji){
+                alert("Autor vec postoji!");
+                return;
+            }else{
+                let a = {
+                    "ime":ime,
+                    "prezime":prezime
+                }
+                autori.push(a);
+                window.localStorage.setItem("autori",JSON.stringify(autori));
+                window.open(`pocetnaA.html?${korisnik}`,"_self");
+            }
+            
+        }
+        function proveriAddAutor(event) {
+            if (event.keyCode == 13) {
+                dodajAutora();
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <h1>DODAVANJE AUTORA</h1>
+    <div style="width: 30%">
+        <p><b>Ime: </b></p>
+        <input type="text" id="ime" placeholder="ime" class="unos" onkeyup="proveriAddAutor(event)">
+        <br><br>
+        <p><b>Prezime: </b></p>
+        <input type="text" id="prezime" placeholder="prezime" class="unos" onkeyup="proveriAddAutor(event)">
+        <br><br>
+        <button onclick="dodajAutora()"><i class="fa fa-check"></i></button>
+    </div>
+
+
+</body>
+
+</html>
